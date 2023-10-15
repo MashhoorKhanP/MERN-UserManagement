@@ -7,13 +7,17 @@ import {toast} from 'react-toastify';
 import Loader from '../components/Loader';
 import { setCredentials } from '../slices/authSlice';
 import { useRegisterMutation } from '../slices/userApiSlice';
-
+import './Validation.css';
 const RegisterScreen = () => {
   const [name,setName] = useState('')
   const [email,setEmail] = useState('');
   const [password,setPassword] = useState('');
   const [confirmPassword,setConfirmPassword] = useState('');
-  
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [confirmpasswordError, setConfirmPasswordError] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -28,9 +32,30 @@ const RegisterScreen = () => {
 
   const submitHandler = async (e) =>{
     e.preventDefault();
-    if(password !== confirmPassword){
+    setNameError(false);
+    setEmailError(false);
+    setPasswordError(false);
+    setConfirmPasswordError(false);
+    if(name.trim().length ===0 || email.trim().length ===0 || password.trim().length ===0){
+      toast.error("Fields can't be empty")
+      if (name.trim().length === 0) setNameError(true);
+      if (email.trim().length === 0) setEmailError(true);
+      if (password.trim().length === 0) setPasswordError(true);
+      if (confirmPassword.trim().length === 0) setConfirmPasswordError(true);
+    }else if(!name.match(/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/)){
+      toast.error("Please enter a valid name!");
+      setNameError(true);
+    }else if(!email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)){
+      toast.error("Please enter a valid email address!")
+      setEmailError(true);
+    }else if(password !== confirmPassword){
       toast.error('Passwords do not match');
+      setConfirmPasswordError(true);
     }else{
+      setNameError(false);
+      setEmailError(false);
+      setPasswordError(false);
+      setConfirmPasswordError(false);
       try{
         const res = await register({ name,email,password}).unwrap();
         dispatch(setCredentials({...res}))
@@ -49,9 +74,10 @@ const RegisterScreen = () => {
           <Form.Label>Name</Form.Label>
           <Form.Control
             type='text'
-            placeholder='Enter Name'
             value={name}
+            placeholder={nameError?'Name is required':'Enter Name'}
             onChange={(e) => setName(e.target.value)}
+            className={nameError ? 'red-border' : 'green-border'}
           ></Form.Control>
         </Form.Group>
 
@@ -59,9 +85,11 @@ const RegisterScreen = () => {
           <Form.Label>Email Address</Form.Label>
           <Form.Control
             type='email'
-            placeholder='Enter Email'
+            placeholder={emailError?'Email is required':'Enter Email'}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className={emailError ? 'red-border' : 'green-border'}
+
           ></Form.Control>
         </Form.Group>
         
@@ -69,9 +97,10 @@ const RegisterScreen = () => {
           <Form.Label>Password</Form.Label>
           <Form.Control
             type='password'
-            placeholder='Enter password'
+            placeholder={passwordError?'Password is required':'Enter password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className={passwordError ? 'red-border' : 'green-border'}
           ></Form.Control>
         </Form.Group>
 
@@ -79,9 +108,10 @@ const RegisterScreen = () => {
           <Form.Label>Confirm Password</Form.Label>
           <Form.Control
             type='password'
-            placeholder='Cofirm Password'
+            placeholder={confirmpasswordError?'Confirm your password':'Confirm Password'}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            className={confirmpasswordError ? 'red-border' : 'green-border'}
           ></Form.Control>
         </Form.Group>
         {isLoading && <Loader/>}

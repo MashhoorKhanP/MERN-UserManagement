@@ -20,11 +20,17 @@ const ProfileScreen = () => {
   useEffect(() => {
     setName(userInfo.name);
     setEmail(userInfo.email);
-  }, [userInfo.setName, userInfo.setEmail]);
+  }, [userInfo.setName, userInfo.setEmail, userInfo.name, userInfo.email]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+    if(name.trim().length ===0 || email.trim().length ===0 || password.trim().length ===0){
+      toast.error("Fields can't be empty")
+    }else if(!name.match(/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/)){
+      toast.error("Please enter a valid name!");
+    }else if(!email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)){
+      toast.error("Please enter a valid email address!")
+    }else if (password !== confirmPassword) {
       toast.error("Passwords do not match");
     } else {
       try {

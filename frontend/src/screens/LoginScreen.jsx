@@ -7,10 +7,13 @@ import { useLoginMutation } from '../slices/userApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import {toast} from 'react-toastify';
 import Loader from '../components/Loader';
+import './Validation.css';
 
 const LoginScreen = () => {
   const [email,setEmail] = useState('');
   const [password,setPassword] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -24,15 +27,27 @@ const LoginScreen = () => {
       navigate('/')
     }
   },[navigate,userInfo])
-
   const submitHandler = async (e) =>{
     e.preventDefault();
-    try {
-      const res = await login({ email,password}).unwrap();
-      dispatch(setCredentials({...res}))
-      navigate('/')
-    } catch (err) {
-      toast.error(err.data.message || err.error);
+    setEmailError(false);
+    setPasswordError(false);
+    if(email.trim().length ===0 || password.trim().length ===0){
+      toast.error("Fields can't be empty");
+      if (email.trim().length === 0) setEmailError(true);
+      if (password.trim().length === 0) setPasswordError(true);
+    }else if(!email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)){
+      toast.error("Please enter a valid email address!");
+      setEmailError(true);
+    }else{
+      setEmailError(false);
+      setPasswordError(false);
+      try {
+        const res = await login({ email,password}).unwrap();
+        dispatch(setCredentials({...res}))
+        navigate('/')
+      } catch (err) {
+        toast.error(err.data.message || err.error);
+      }
     }
   }
   
@@ -44,9 +59,10 @@ const LoginScreen = () => {
           <Form.Label>Email Address</Form.Label>
           <Form.Control
             type='email'
-            placeholder='Enter Email'
             value={email}
+            placeholder= {emailError ? 'Email is required': 'Enter Email'}
             onChange={(e) => setEmail(e.target.value)}
+            className={emailError ? 'red-border' : 'green-border'}
           ></Form.Control>
         </Form.Group>
         
@@ -54,9 +70,9 @@ const LoginScreen = () => {
           <Form.Label>Password</Form.Label>
           <Form.Control
             type='password'
-            placeholder='Enter password'
+            placeholder={passwordError?'Password is required':'Enter password'}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)} className={passwordError ? 'red-border' : 'green-border'}
           ></Form.Control>
         </Form.Group>
         {isLoading && <Loader/>}
