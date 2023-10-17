@@ -34,7 +34,7 @@ const AdminHeader = () => {
             {adminInfo ? (
                 <>
                   <NavDropdown title={adminInfo.email} id="admin_email">
-                    <LinkContainer to="/profile">
+                    <LinkContainer to="/admin/users">
                       <NavDropdown.Item>Users</NavDropdown.Item>
                     </LinkContainer>
                     <NavDropdown.Item className="text-danger" onClick={logoutHandler}>

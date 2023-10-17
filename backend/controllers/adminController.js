@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import Admin from '../models/adminModel.js';
 import generateToken from '../utils/generateToken.js';
-
+import User from '../models/userModel.js';
 // @desc    Auth admin/set token
 //route     POST /api/admin/auth
 //@access   Public
@@ -33,4 +33,12 @@ const logoutAdmin = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Admin Logged Out' });
 })
 
-export { authAdmin, logoutAdmin };
+// @desc    User data
+//route     GET /api/admin/users
+//@access   Private
+const getUsers = asyncHandler(async (req, res) => {
+  const user = await User.find({}).select('-password');
+  res.json({user});
+});
+
+export { authAdmin, logoutAdmin,getUsers };
