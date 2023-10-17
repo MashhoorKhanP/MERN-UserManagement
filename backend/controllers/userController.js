@@ -1,7 +1,18 @@
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
+import cloudinary from 'cloudinary';
+import fs from 'fs';
+import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
 
+cloudinary.v2.config({
+  cloud_name:process.env.CLOUDINARY_NAME,
+  api_key:process.env.CLOUDINARY_KEY,
+  api_secret:process.env.CLOUDINARY_SECRET,
+  secure:true
+})
 
 // @desc    Auth user/set token
 //route     POST /api/users/auth
@@ -11,17 +22,23 @@ const authUser =asyncHandler(async(req,res) => {
   const user = await User.findOne({email});
   if(user && (await user.matchPassword(password))){
     generateToken(res,user._id)
-    res.status(201).json({
-       _id:user._id,
-       name:user.name,
-       email:user.email
-    })
+    const response = {
+      _id:user._id,
+      name:user.name,
+      email:user.email
+    };
+    if(user.imageUrl){
+      response.imageUrl = user.imageUrl;
+    }
+
+    res.status(201).json(response)
+    
   }else{
     res.status(401); 
     throw new Error('Invalid email or password')
   }
   res.status(200).json({message:'Auth User'})
-}) 
+});
 
 // @desc    Register a new user
 //route     POST /api/users 
@@ -83,17 +100,33 @@ const getUserProfile =asyncHandler(async(req,res) => {
 const  updateUserProfile=asyncHandler(async(req,res) => {
   const user = await User.findById(req.user._id);
   if(user){
+    if(req.file){
+      const result = await cloudinary.uploader.upload(req.file.path);
+      user.imageUrl = result.secure_url || null;
+
+      const filePath = path.join('backend','public','images',req.file.filename);
+
+      fs.unlink(filePath,(err) =>{
+        if(err){
+          console.error('Error deleting file (fs.unlink):'+err);
+        }
+      });
+    }
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     if(req.body.password){
       user.password = req.body.password;
     }
     const updatedUser = await user.save();
-    res.status(200).json({
+    const response = {
       _id:updatedUser._id,
       name:updatedUser.name,
       email:updatedUser.email
-    });
+    };
+    if(updatedUser.imageUrl){
+      response.imageUrl = updatedUser.imageUrl;
+    }
+    res.status(200).json(response);
   }else{
     res.status(404);
     throw new Error('User not found')

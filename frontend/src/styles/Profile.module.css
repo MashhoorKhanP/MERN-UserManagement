@@ -1,0 +1,13 @@
+.profile_img {
+  border-width: 4px;
+  border-color: #E5E7EB; /* Assuming Tailwind's border-gray-100 corresponds to this color */
+  width: 135px;
+  height: 135px;
+  border-radius: 50%; /* Rounded to create a circle */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* shadow-lg equivalent */
+  cursor: pointer;
+}
+
+.profile_img:hover {
+  border-color: #BFDBFE; /* Assuming Tailwind's border-gray-200 corresponds to this color */
+}

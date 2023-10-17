@@ -7,7 +7,7 @@ import { useLoginMutation } from '../slices/userApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import {toast} from 'react-toastify';
 import Loader from '../components/Loader';
-import './Validation.css';
+import '../../src/styles/Validation.css';
 
 const LoginScreen = () => {
   const [email,setEmail] = useState('');
@@ -56,7 +56,7 @@ const LoginScreen = () => {
       <h1>Sign In</h1>
       <Form onSubmit={submitHandler}>
         <Form.Group className='my-2' controlId='email'>
-          <Form.Label>Email Address</Form.Label>
+          <Form.Label>Email Address*</Form.Label>
           <Form.Control
             type='email'
             value={email}
@@ -67,7 +67,7 @@ const LoginScreen = () => {
         </Form.Group>
         
         <Form.Group className='my-2' controlId='password'>
-          <Form.Label>Password</Form.Label>
+          <Form.Label>Password*</Form.Label>
           <Form.Control
             type='password'
             placeholder={passwordError?'Password is required':'Enter password'}
@@ -76,7 +76,8 @@ const LoginScreen = () => {
           ></Form.Control>
         </Form.Group>
         {isLoading && <Loader/>}
-        <Button type='submit' variant='primary' className='mt-3' >
+        <div className='text-center'>
+        <Button type='submit' className='mt-3 mt-3 bg-black w-75' >
           Sign In 
         </Button>
         
@@ -85,6 +86,7 @@ const LoginScreen = () => {
             New User ? <Link to='/register'>Register here</Link>
           </Col>
         </Row>
+        </div>
       </Form>
     </FormContainer>
   )

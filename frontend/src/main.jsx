@@ -15,17 +15,28 @@ import PrivateRoute from "./components/PrivateRoute";
 import HomeScreen from "./screens/HomeScreen.jsx";
 import LoginScreen from "./screens/LoginScreen.jsx";
 import RegisterScreen from "./screens/RegisterScreen.jsx";
-import ProfileScreen from "./screens/ProfileScreen";
+import ProfileScreen from "./screens/ProfileScreen.jsx";
+import AdminLoginScreen from "./screens/AdminLoginScreen.jsx";
+import AdminHomeScreen from "./screens/AdminHomeScreen";
+import AdminPrivateRoute from "./components/AdminPrivateRoute";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
+      {/*--------- User Routes --------- */}
       <Route index={true} path="/" element={<HomeScreen />} />
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/register" element={<RegisterScreen />} />
       {/* Private Route */}
       <Route path="" element={<PrivateRoute />}>
         <Route path="/profile" element={<ProfileScreen />} />
+      </Route>
+      {/* ------- Admin Routes -------- */}
+      <Route path="/admin/login" element={<AdminLoginScreen />} />
+
+      {/* Private Route not setted */}
+      <Route path="" element={<AdminPrivateRoute />}>
+        <Route path="/admin" element={<AdminHomeScreen />} />
       </Route>
     </Route>
   )

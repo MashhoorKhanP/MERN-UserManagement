@@ -7,7 +7,7 @@ import {toast} from 'react-toastify';
 import Loader from '../components/Loader';
 import { setCredentials } from '../slices/authSlice';
 import { useRegisterMutation } from '../slices/userApiSlice';
-import './Validation.css';
+import '../../src/styles/Validation.css';
 const RegisterScreen = () => {
   const [name,setName] = useState('')
   const [email,setEmail] = useState('');
@@ -30,6 +30,17 @@ const RegisterScreen = () => {
     }
   },[navigate,userInfo])
 
+  const isStrongPassword = (password) => {
+    const rules = {
+        length: password.length >= 8,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        digit: /\d/.test(password),
+        specialCharacter: /[\W_]/.test(password),
+    };
+
+    return rules;
+};
   const submitHandler = async (e) =>{
     e.preventDefault();
     setNameError(false);
@@ -48,6 +59,9 @@ const RegisterScreen = () => {
     }else if(!email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)){
       toast.error("Please enter a valid email address!")
       setEmailError(true);
+    }else if(confirmPassword.trim().length ===0){
+      toast.error('Confirm your password');
+      setConfirmPasswordError(true);
     }else if(password !== confirmPassword){
       toast.error('Passwords do not match');
       setConfirmPasswordError(true);
@@ -71,7 +85,7 @@ const RegisterScreen = () => {
       <h1>Sign Up</h1>
       <Form onSubmit={submitHandler}>
       <Form.Group className='my-2' controlId='name'>
-          <Form.Label>Name</Form.Label>
+          <Form.Label>Name*</Form.Label>
           <Form.Control
             type='text'
             value={name}
@@ -82,7 +96,7 @@ const RegisterScreen = () => {
         </Form.Group>
 
         <Form.Group className='my-2' controlId='email'>
-          <Form.Label>Email Address</Form.Label>
+          <Form.Label>Email Address*</Form.Label>
           <Form.Control
             type='email'
             placeholder={emailError?'Email is required':'Enter Email'}
@@ -94,7 +108,7 @@ const RegisterScreen = () => {
         </Form.Group>
         
         <Form.Group className='my-2' controlId='password'>
-          <Form.Label>Password</Form.Label>
+          <Form.Label>Password*</Form.Label>
           <Form.Control
             type='password'
             placeholder={passwordError?'Password is required':'Enter password'}
@@ -102,10 +116,67 @@ const RegisterScreen = () => {
             onChange={(e) => setPassword(e.target.value)}
             className={passwordError ? 'red-border' : 'green-border'}
           ></Form.Control>
+          <div className="password-strength">
+  {password.length >= 1 && (
+    <div className={`strength-rule ${isStrongPassword(password).length ? 'valid' : ''}`}>
+      {isStrongPassword(password).length ? (
+        <span role="img" aria-label="check" className="valid"><i className="bi bi-check"></i></span>
+      ) : (
+        <span role="img" aria-label="cross"><i className="bi bi-x"></i></span>
+      )}
+      At least 8 characters
+    </div>
+  )}
+
+  {password.length >= 1 && (
+    <div className={`strength-rule ${isStrongPassword(password).lowercase ? 'valid' : ''}`}>
+      {isStrongPassword(password).lowercase ? (
+        <span role="img" aria-label="check" className="valid"><i className="bi bi-check"></i></span>
+      ) : (
+        <span role="img" aria-label="cross"><i className="bi bi-x"></i></span>
+      )}
+      At least one lowercase letter
+    </div>
+  )}
+
+  {password.length >= 1 && (
+    <div className={`strength-rule ${isStrongPassword(password).uppercase ? 'valid' : ''}`}>
+      {isStrongPassword(password).uppercase ? (
+        <span role="img" aria-label="check" className="valid"><i className="bi bi-check"></i></span>
+      ) : (
+        <span role="img" aria-label="cross"><i className="bi bi-x"></i></span>
+      )}
+      At least one uppercase letter
+    </div>
+  )}
+
+  {password.length >= 1 && (
+    <div className={`strength-rule ${isStrongPassword(password).digit ? 'valid' : ''}`}>
+      {isStrongPassword(password).digit ? (
+        <span role="img" aria-label="check" className="valid"><i className="bi bi-check"></i></span>
+      ) : (
+        <span role="img" aria-label="cross"><i className="bi bi-x"></i></span>
+      )}
+      At least one digit
+    </div>
+  )}
+
+  {password.length >= 1 && (
+    <div className={`strength-rule ${isStrongPassword(password).specialCharacter ? 'valid' : ''}`}>
+      {isStrongPassword(password).specialCharacter ? (
+        <span role="img" aria-label="check" className="valid"><i className="bi bi-check"></i></span>
+      ) : (
+        <span role="img" aria-label="cross"><i className="bi bi-x"></i></span>
+      )}
+      At least one special character
+    </div>
+  )}
+</div>
+
         </Form.Group>
 
         <Form.Group className='my-2' controlId='confirmPassword'>
-          <Form.Label>Confirm Password</Form.Label>
+          <Form.Label>Confirm Password*</Form.Label>
           <Form.Control
             type='password'
             placeholder={confirmpasswordError?'Confirm your password':'Confirm Password'}
@@ -115,7 +186,8 @@ const RegisterScreen = () => {
           ></Form.Control>
         </Form.Group>
         {isLoading && <Loader/>}
-        <Button type='submit' variant='primary' className='mt-3' >
+        <div className='text-center'>
+        <Button type='submit' className='mt-3 bg-black w-75' >
           Sign Up 
         </Button>
         
@@ -124,6 +196,7 @@ const RegisterScreen = () => {
             Already have an account? <Link to='/login'>Login here</Link>
           </Col>
         </Row>
+        </div>
       </Form>
     </FormContainer>
   )
