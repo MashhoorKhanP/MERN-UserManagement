@@ -17,7 +17,21 @@ const RegisterScreen = () => {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [confirmpasswordError, setConfirmPasswordError] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
+
+  const passwordStyles = {
+    passwordInput: {
+      position: "relative",
+    },
+    passwordToggle: {
+      position: "absolute",
+      top: "72%",
+      transform: "translateY(-50%)",
+      right: "10px",
+      cursor: "pointer",
+    },
+  };
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -41,6 +55,11 @@ const RegisterScreen = () => {
 
     return rules;
 };
+
+const togglePasswordVisibility = () => {
+  setPasswordVisible(!passwordVisible);
+};
+
   const submitHandler = async (e) =>{
     e.preventDefault();
     setNameError(false);
@@ -108,14 +127,28 @@ const RegisterScreen = () => {
         </Form.Group>
         
         <Form.Group className='my-2' controlId='password'>
-          <Form.Label>Password*</Form.Label>
-          <Form.Control
-            type='password'
-            placeholder={passwordError?'Password is required':'Enter password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={passwordError ? 'red-border' : 'green-border'}
-          ></Form.Control>
+        <div style={passwordStyles.passwordInput}>
+            <Form.Label>Password*</Form.Label>
+            <Form.Control
+              type={passwordVisible ? "text" : "password"}
+              placeholder={
+                passwordError ? "Password is required" : "Enter password"
+              }
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={passwordError ? "red-border" : "green-border"}
+            ></Form.Control>{" "}
+            <div
+              style={passwordStyles.passwordToggle}
+              onClick={togglePasswordVisibility}
+            >
+              {passwordVisible ? (
+                <i className="bi bi-eye-slash-fill" id="password-toggle"></i>
+              ) : (
+                <i className="bi bi-eye-fill" id="password-toggle"></i>
+              )}
+            </div>
+          </div>
           <div className="password-strength">
   {password.length >= 1 && (
     <div className={`strength-rule ${isStrongPassword(password).length ? 'valid' : ''}`}>

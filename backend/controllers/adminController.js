@@ -41,4 +41,53 @@ const getUsers = asyncHandler(async (req, res) => {
   res.json({user});
 });
 
-export { authAdmin, logoutAdmin,getUsers };
+// @desc    Delete user
+//route     DELETE /api/admin/users/delete
+//@access   Private
+const deleteUser = asyncHandler(async(req,res) => {
+  const userId = req.query.id;
+  console.log(userId,"userId");
+  if(!userId){
+    res.status(400);
+    throw new Error('Invalid user data');
+  }
+
+  const deletedUser =  await User.findByIdAndRemove(userId);
+  if(deletedUser){
+    res.status(200).json({message:'User deleted successfully'});
+
+  }else{
+    res.status(404);
+    throw new Error('Invalid user data');
+  }
+
+});
+
+// @desc    Add new user 
+//route     POST /api/admin/users/add-user
+//@access   Private
+
+const addUser = asyncHandler(async(req,res)=>{
+  const {name,email,password} = req.body;
+
+  const userExists = await User.findOne({email});
+
+  if(userExists){
+    res.status(400);
+    throw new Error('User already exists');
+  }
+
+  const user = await User.create({name,email,password});
+  if(user){
+    res.status(201).json({
+      _id:user.id,
+      name:user.name,
+      email:user.email
+    });
+  }else{
+    res.status(400);
+    throw new Error('Invalid userData');
+  }
+});
+
+export { authAdmin, logoutAdmin,getUsers,deleteUser,addUser };
