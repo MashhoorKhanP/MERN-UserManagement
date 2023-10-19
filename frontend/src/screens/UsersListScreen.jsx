@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button, Container, Form, Modal, Table } from "react-bootstrap";
-import { useGetUsersDataMutation,useDeleteUserMutation } from "../slices/adminApiSlice";
+import { useGetUsersDataMutation,useDeleteUserMutation, usePutBlockUserMutation } from "../slices/adminApiSlice";
 import { FaTrash } from "react-icons/fa";
 
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 import Loader from "../components/Loader";
 
 const UsersListScreen = () => {
@@ -14,8 +14,8 @@ const UsersListScreen = () => {
   const [data, setData] = useState(true);
 
   const [getUsersData, { isLoading }] = useGetUsersDataMutation();
+  const [putBlockUser] = usePutBlockUserMutation();
   const [deleteUser] = useDeleteUserMutation();
-
   useEffect(() => {
     async function fetchUser() {
       const res = await getUsersData().unwrap("");
@@ -49,6 +49,20 @@ const UsersListScreen = () => {
   const handleCloseModal = () => {
     setUserId(null);
     setShowModal(false);
+  };
+  const handleBlockUnblockUser = async (userId) => {
+    const response = await putBlockUser(userId).unwrap("");
+    const updatedUsers = users.map((user) => {
+      if (user._id === userId) {
+        return {
+          ...user,
+          isBlocked: response.isBlocked, // Update the user's isBlocked status
+        };
+      }
+      return user;
+    });
+
+    setUsers(updatedUsers);
   };
 
   return (
@@ -114,9 +128,16 @@ const UsersListScreen = () => {
                     >
                       <FaTrash />
                     </Button>
-                    <Link>
-                      <Button className="btn-success ms-2">Update</Button>
-                    </Link>
+                    
+                    
+                      {user.isBlocked ?
+                      <Button onClick={() => handleBlockUnblockUser(user._id)} className="btn-success w-25 ms-2">Unblock</Button>
+                      :
+                      <Button onClick={() => handleBlockUnblockUser(user._id)} className="btn-danger w-25 ms-2">Block</Button>
+                      }
+                    
+                      <Button  className="btn-success ms-2">Update</Button>
+        
                   </td>
                 </tr>
               ))}
@@ -126,7 +147,7 @@ const UsersListScreen = () => {
           <Modal.Header closeButton>
             <Modal.Title>Confirm Deletion</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
+          <Modal.Body>Are you sure you want to delete this User?</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseModal}>
               Close

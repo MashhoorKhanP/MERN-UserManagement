@@ -1,55 +1,58 @@
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Form, Button } from "react-bootstrap";
 import FormContainer from "../components/FormContainer";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
-import { setCredentials } from "../slices/authSlice";
-import { useUpdateUserMutation } from "../slices/userApiSlice";
+import { useGetUpdateUserMutation, useUpdateUserDataMutation } from "../slices/adminApiSlice";
 import avatar from '../assets/profile.png';
 import styles from '../styles/Profile.module.css'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const ProfileScreen = () => {
+
+const AdminUserUpdate = () => {
+  const {id } = useParams();
+  const [userData,setUserData] = useState();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [image,setImage] = useState(null);
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { userInfo } = useSelector((state) => state.auth);
-  const [UpdateProfile, {isLoading}] = useUpdateUserMutation();
+  
+  const [getUpdateUser] = useGetUpdateUserMutation();
+  const [UpdateUserData,{isLoading}] = useUpdateUserDataMutation();
+  
+  const formData = new FormData();
+  formData.append("_id",id);
+  formData.append("name",name);
+  formData.append("email",email);
+  formData.append("file",image);
 
   useEffect(() => {
-    setName(userInfo.name);
-    setEmail(userInfo.email);
-  }, [userInfo]);
+    async function fetchUser(id){
+      const res = await getUpdateUser(id);
+      const data = res.data;
+      setUserData(data);
+      setName(data.name);
+      setEmail(data.email);
+    }
+    fetchUser(id);
+  }, [id,getUpdateUser]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    if(name.trim().length ===0 || email.trim().length ===0 || password.trim().length ===0){
+    if(name.trim().length ===0 || email.trim().length ===0){
       toast.error("Fields can't be empty")
     }else if(!name.match(/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/)){
       toast.error("Please enter a valid name!");
     }else if(!email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)){
       toast.error("Please enter a valid email address!")
-    }else if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
     } else {
       try {
-        const formData = new FormData();
-        formData.append("_id",userInfo._id);
-        formData.append("name",name);
-        formData.append("email",email);
-        formData.append("password",password);
-        formData.append("file",image);
-        const res = await UpdateProfile(formData).unwrap();
-        dispatch(setCredentials({...res}));
+       
+        await UpdateUserData(formData).unwrap('');
         toast.success('Profile updated');
-        navigate('/');
+        navigate('/admin/users');
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }
@@ -58,12 +61,12 @@ const ProfileScreen = () => {
 
   return (
     <FormContainer>
-      <h1>Update Profile</h1>
+      <h1>Update User</h1>
       <Form onSubmit={submitHandler}>
       <Form.Group className="my-2" controlId="name">
           <div className="profile flex text-center py-2">
           <Form.Label className="fw-bold">Profile Image</Form.Label><br/>
-            <img src={userInfo?.imageUrl?userInfo?.imageUrl:avatar} className={styles.profile_img} alt="avatar"></img>
+            <img src={userData?.imageUrl?userData?.imageUrl:avatar} className={styles.profile_img} alt="avatar"></img>
           <Form.Control
             className="my-3"
             type="file"
@@ -75,7 +78,6 @@ const ProfileScreen = () => {
             ></Form.Control>
             </div>
         </Form.Group>
-
         <Form.Group className="my-2" controlId="name">
           <Form.Label>Name*</Form.Label>
           <Form.Control
@@ -95,26 +97,6 @@ const ProfileScreen = () => {
             onChange={(e) => setEmail(e.target.value)}
           ></Form.Control>
         </Form.Group>
-
-        <Form.Group className="my-2" controlId="password">
-          <Form.Label>Password*</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        <Form.Group className="my-2" controlId="confirmPassword">
-          <Form.Label>Confirm Password*</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
         {isLoading && <Loader/>}
         <div className='text-center'>
         <Button type="submit" className="mt-3 bg-black w-75">
@@ -126,4 +108,4 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default AdminUserUpdate;

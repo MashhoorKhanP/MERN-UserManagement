@@ -17,6 +17,10 @@ const userSchema = mongoose.Schema({
   },
   imageUrl:{
     type: String
+  },
+  isBlocked:{
+    type:Boolean,
+    default: false,
   }
 },{
   timestamps :true

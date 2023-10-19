@@ -21,17 +21,22 @@ const authUser =asyncHandler(async(req,res) => {
   const {email,password} = req.body;
   const user = await User.findOne({email});
   if(user && (await user.matchPassword(password))){
-    generateToken(res,user._id)
-    const response = {
-      _id:user._id,
-      name:user.name,
-      email:user.email
-    };
-    if(user.imageUrl){
-      response.imageUrl = user.imageUrl;
-    }
+    if(user.isBlocked != true ){
 
-    res.status(201).json(response)
+      generateToken(res,user._id)
+      const response = {
+        _id:user._id,
+        name:user.name,
+        email:user.email
+      };
+      if(user.imageUrl){
+        response.imageUrl = user.imageUrl;
+      }
+  
+      res.status(201).json(response)
+    }else{
+      throw new Error('User is blocked by admin');
+    }
     
   }else{
     res.status(401); 
