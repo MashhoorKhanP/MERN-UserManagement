@@ -40,9 +40,12 @@ const router = createBrowserRouter(
       {/* Private Route not setted */}
       <Route path="" element={<AdminPrivateRoute />}>
         <Route path="/admin" element={<AdminHomeScreen />} />
-        <Route path="/admin/users" element={<UsersListScreen/>}/>
-        <Route path="/admin/users/add-user" element={<AdminAddUser/>}/>
-        <Route path="/admin/users/update-user/:id" element={<AdminUserUpdate/>}/>
+        <Route path="/admin/users" element={<UsersListScreen />} />
+        <Route path="/admin/users/add-user" element={<AdminAddUser />} />
+        <Route
+          path="/admin/users/update-user/:id"
+          element={<AdminUserUpdate />}
+        />
       </Route>
     </Route>
   )

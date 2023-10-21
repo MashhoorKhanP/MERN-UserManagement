@@ -2,22 +2,22 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const adminSchema = mongoose.Schema({
-  email:{
-    type:String,
-    required:true,
-    unique:true
+  email: {
+    type: String,
+    required: true,
+    unique: true
   },
-  password:{
-    type:String,
-    required:true
+  password: {
+    type: String,
+    required: true
   }
 })
 
-adminSchema.methods.matchPassword = async function(enteredPassword){
-  return await bcrypt.compare(enteredPassword,this.password);
+adminSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
   //this.password means password in the database
 }
 
-const Admin = mongoose.model('Admin',adminSchema);
+const Admin = mongoose.model('Admin', adminSchema);
 
 export default Admin;

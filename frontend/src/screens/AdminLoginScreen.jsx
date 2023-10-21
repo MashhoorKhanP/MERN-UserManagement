@@ -21,7 +21,7 @@ const AdminLoginScreen = () => {
   const [login, { isLoading }] = useAdminLoginMutation();
 
   const { adminInfo } = useSelector((state) => state.auth);
-  
+
   useEffect(() => {
     if (adminInfo) {
       navigate("/admin");
@@ -45,7 +45,7 @@ const AdminLoginScreen = () => {
       setPasswordError(false);
       try {
         const res = await login({ email, password }).unwrap();
-        console.log(res,'resposnesfs');
+        console.log(res, "resposnesfs");
         dispatch(setAdminCredentials({ ...res }));
         navigate("/");
       } catch (err) {

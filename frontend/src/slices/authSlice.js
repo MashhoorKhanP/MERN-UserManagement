@@ -1,35 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  userInfo : localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo'))
-  : null
+  userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo'))
+    : null
   ,
-  adminInfo : localStorage.getItem('adminInfo') ? JSON.parse(localStorage.getItem('adminInfo'))
-  : null
+  adminInfo: localStorage.getItem('adminInfo') ? JSON.parse(localStorage.getItem('adminInfo'))
+    : null
 }
 
 const authSlice = createSlice({
-  name:'auth',
+  name: 'auth',
   initialState,
-  reducers:{
-    setCredentials: (state,action) =>{
+  reducers: {
+    setCredentials: (state, action) => {
       state.userInfo = action.payload;
-      localStorage.setItem('userInfo',JSON.stringify(action.payload))
+      localStorage.setItem('userInfo', JSON.stringify(action.payload))
     },
     logout: (state) => {
       state.userInfo = null;
       localStorage.removeItem('userInfo');
     },
 
-    setAdminCredentials: (state,action) =>{
+    setAdminCredentials: (state, action) => {
       state.adminInfo = action.payload;
-      localStorage.setItem('adminInfo',JSON.stringify(action.payload))
+      localStorage.setItem('adminInfo', JSON.stringify(action.payload))
     },
-    adminlogout:(state) =>{
+    adminlogout: (state) => {
       state.adminInfo = null;
       localStorage.removeItem('adminInfo');
     }
   }
 })
-export const {setCredentials,logout,setAdminCredentials,adminlogout} = authSlice.actions;
+export const { setCredentials, logout, setAdminCredentials, adminlogout } = authSlice.actions;
 export default authSlice.reducer;

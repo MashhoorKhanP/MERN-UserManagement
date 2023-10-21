@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { Button, Container, Form, Modal, Table } from "react-bootstrap";
-import { useGetUsersDataMutation,useDeleteUserMutation, usePutBlockUserMutation } from "../slices/adminApiSlice";
+import {
+  useGetUsersDataMutation,
+  useDeleteUserMutation,
+  usePutBlockUserMutation,
+} from "../slices/adminApiSlice";
 import { FaTrash } from "react-icons/fa";
 
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Loader from "../components/Loader";
 
 const UsersListScreen = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [userId,setUserId] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [data, setData] = useState(true);
 
   const [getUsersData, { isLoading }] = useGetUsersDataMutation();
@@ -28,21 +32,21 @@ const UsersListScreen = () => {
     const userName = user.name.toLowerCase();
     const userEmail = user.email;
     const searchValue = search.toLowerCase();
-    return (userName.includes(searchValue),userEmail.includes(searchValue));
+    return userName.includes(searchValue), userEmail.includes(searchValue);
   });
 
-  const handleDelete = async() => {
-    if(userId){
-      console.log(userId,'userlistscreenHandleDelete')
-      await deleteUser(userId).unwrap(''); 
-      setData(prevData => !prevData) ;
+  const handleDelete = async () => {
+    if (userId) {
+      console.log(userId, "userlistscreenHandleDelete");
+      await deleteUser(userId).unwrap("");
+      setData((prevData) => !prevData);
       setUserId(null);
       setShowModal(false);
     }
-  }
+  };
 
   const handleDeleteClick = (userId) => {
-    setUserId(userId)
+    setUserId(userId);
     setShowModal(true);
   };
 
@@ -128,16 +132,24 @@ const UsersListScreen = () => {
                     >
                       <FaTrash />
                     </Button>
-                    
-                    
-                      {user.isBlocked ?
-                      <Button onClick={() => handleBlockUnblockUser(user._id)} className="btn-success w-25 ms-2">Unblock</Button>
-                      :
-                      <Button onClick={() => handleBlockUnblockUser(user._id)} className="btn-danger w-25 ms-2">Block</Button>
-                      }
-                    
-                      <Button  className="btn-success ms-2">Update</Button>
-        
+
+                    {user.isBlocked ? (
+                      <Button
+                        onClick={() => handleBlockUnblockUser(user._id)}
+                        className="btn-success w-25 ms-2"
+                      >
+                        Unblock
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleBlockUnblockUser(user._id)}
+                        className="btn-danger w-25 ms-2"
+                      >
+                        Block
+                      </Button>
+                    )}
+
+                    <Button className="btn-success ms-2">Update</Button>
                   </td>
                 </tr>
               ))}
@@ -152,7 +164,7 @@ const UsersListScreen = () => {
             <Button variant="secondary" onClick={handleCloseModal}>
               Close
             </Button>
-            <Button variant="danger" onClick={()=>handleDelete()}>
+            <Button variant="danger" onClick={() => handleDelete()}>
               Delete
             </Button>
           </Modal.Footer>

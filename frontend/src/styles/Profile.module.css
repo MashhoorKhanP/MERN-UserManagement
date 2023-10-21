@@ -1,6 +1,6 @@
 .profile_img {
   border-width: 4px;
-  border-color: #E5E7EB; /* Assuming Tailwind's border-gray-100 corresponds to this color */
+  border-color: #e5e7eb; /* Assuming Tailwind's border-gray-100 corresponds to this color */
   width: 135px;
   height: 135px;
   border-radius: 50%; /* Rounded to create a circle */
@@ -9,5 +9,5 @@
 }
 
 .profile_img:hover {
-  border-color: #BFDBFE; /* Assuming Tailwind's border-gray-200 corresponds to this color */
+  border-color: #bfdbfe; /* Assuming Tailwind's border-gray-200 corresponds to this color */
 }
