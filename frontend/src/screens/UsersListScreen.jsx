@@ -149,7 +149,7 @@ const UsersListScreen = () => {
                       </Button>
                     )}
 
-                    <Button className="btn-success ms-2">Update</Button>
+                    <Link to={`/admin/users/update-user/${user._id}`}><Button className="btn-success ms-2">Update</Button></Link>
                   </td>
                 </tr>
               ))}

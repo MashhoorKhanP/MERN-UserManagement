@@ -51,7 +51,7 @@ export const adminApiSlice = apiSlice.injectEndpoints({
     putBlockUser: builder.mutation({
       query: (data) => ({
         url: `${ADMIN_URL}/users/unblock-block?id=${data}`,
-        method: 'PUT',
+        method: 'PATCH',
       })
     })
 

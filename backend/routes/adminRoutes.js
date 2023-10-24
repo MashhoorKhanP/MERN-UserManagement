@@ -10,6 +10,6 @@ router.post('/logout', logoutAdmin);
 router.get('/users', protect, getUsers);
 router.post('/users/add-user', protect, addUser);
 router.delete('/users/delete', protect, deleteUser);
-router.put('/users/unblock-block', protect, blockUnblockUser);
+router.patch('/users/unblock-block', protect, blockUnblockUser);
 router.route('/users/update-user').get(protect, getUpdateUserProfile).put(protect, userImage.single("file"), updateUserProfile);
 export default router;

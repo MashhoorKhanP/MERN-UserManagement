@@ -25,7 +25,7 @@ const AdminHeader = () => {
     <header>
      <Navbar bg="" className="border-bottom" variant="dark" expand="lg" collapseOnSelect>
         <Container>
-          <LinkContainer to="/">
+          <LinkContainer to="/admin">
             <Navbar.Brand className="fw-bold">MERN USERMANAGEMENT S/M <h4 className="fw-light">ADMIN</h4> </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
