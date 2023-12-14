@@ -61,6 +61,19 @@ const RegisterScreen = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    const passwordRules = {
+        length: password.length >= 8,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        digit: /\d/.test(password),
+        specialCharacter: /[\W_]/.test(password),
+      };
+    
+      if (!Object.values(passwordRules).every((rule) => rule)) {
+        toast.error('Enter a strong password.');
+        return;
+      }
     setNameError(false);
     setEmailError(false);
     setPasswordError(false);
